@@ -1,0 +1,3 @@
+[submodule "code/php/vendors/phpunit"]
+	path = code/php/vendors/phpunit
+	url = git://github.com/sebastianbergmann/phpunit.git
