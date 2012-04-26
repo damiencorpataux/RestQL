@@ -1,3 +1,21 @@
 [submodule "code/php/vendors/phpunit"]
 	path = code/php/vendors/phpunit
 	url = git://github.com/sebastianbergmann/phpunit.git
+[submodule "code/php/vendors/php-file-iterator"]
+	path = code/php/vendors/php-file-iterator
+	url = https://github.com/sebastianbergmann/php-file-iterator.git
+[submodule "code/php/vendors/php-code-coverage"]
+	path = code/php/vendors/php-code-coverage
+	url = https://github.com/sebastianbergmann/php-code-coverage.git
+[submodule "code/php/vendors/php-token-stream"]
+	path = code/php/vendors/php-token-stream
+	url = https://github.com/sebastianbergmann/php-token-stream.git
+[submodule "code/php/vendors/php-text-template"]
+	path = code/php/vendors/php-text-template
+	url = https://github.com/sebastianbergmann/php-text-template.git
+[submodule "code/php/vendors/php-timer"]
+	path = code/php/vendors/php-timer
+	url = https://github.com/sebastianbergmann/php-timer.git
+[submodule "code/php/vendors/phpunit-mock-objects"]
+	path = code/php/vendors/phpunit-mock-objects
+	url = https://github.com/sebastianbergmann/phpunit-mock-objects.git
