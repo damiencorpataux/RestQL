@@ -36,6 +36,3 @@ class xSqlWherePredicateMysql extends xSqlWherePredicate {}
 class xSqlGroupMysql extends xSqlGroup {}
 
 class xSqlOrderMysql extends xSqlOrder {}
-
-// TODO: Implement parent class (xSqlHaving)
-class xSqlHavingMysql extends xSqlHaving {}

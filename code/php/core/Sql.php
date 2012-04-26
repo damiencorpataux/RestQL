@@ -96,6 +96,8 @@ abstract class xSqlElement {
         return $classname::$$property;
     }
 
+    abstract function __toString();
+
 }
 
 /**
@@ -204,6 +206,10 @@ class xSqlTypeDefault extends xSqlType {
 
     public function enquote($value) {
         return "'{$value}'";
+    }
+
+    function __toString() {
+        return $this->name;
     }
 }
 
@@ -327,7 +333,7 @@ class xSqlSelect extends xSqlClause {
     public $fields = array();
 
     function __construct($fields=array()) {
-        $this->fields = xUtil::arrize($fields);
+        $this->fields = is_array($fields) ? $fields : array($fields);
     }
 
     function __toString() {
@@ -550,8 +556,6 @@ class xSqlOffset extends xSqlClause {
     }
 }
 
-class xSqlHaving extends xSqlClause {}
-
 /**
  * Represents a WHERE clause.
  * @package xSql
@@ -598,7 +602,7 @@ class xSqlWherePredicateGroup extends xSqlElement {
     public static $operators = array('AND', 'OR');
 
     function __construct(array $predicates=array(), $operator=null) {
-        $this->predicates = xUtil::arrize($predicates);
+        $this->predicates = is_array($predicates) ? $predicates : array($predicates);
         if ($operator) $this->operator = $operator;
     }
 

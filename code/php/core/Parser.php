@@ -12,12 +12,18 @@
  * Parser base class.
  * @package xSql
  */
-abstract class xSqlRequestParser extends xPlugin {
-    // Dev purpose:
-    // Makes constructor public for easy instanciation (testing)
-    // TODO: remove this
-    public function __construct(array $params=array()) {
-        return parent::__construct($params);
+abstract class xSqlRequestParser {
+
+    public $params = array();
+
+    function __construct($params=array()) {
+        $this->params = array_merge_recursive($this->params, $params);
+    }
+
+    public static function create() {
+        // Calls class constructor with args
+        $refClass = new ReflectionClass(get_called_class());
+        return $refClass->newInstanceArgs(func_get_args());
     }
 
     /**
@@ -176,7 +182,7 @@ class xSqlRequestParserSelect extends xSqlRequestParser {
         $f = array();
         foreach ($p as $table => $fields) {
             $table = $this->is_assoc($table) ? xSqlFactory::create('Table', $table) : null;
-            $fields = xUtil::arrize($fields);
+            $fields = is_array($fields) ? $fields : array($fields);
             foreach($fields as $alias => $field) {
                 $alias = $this->is_assoc($alias) ? $alias : null;
                 $type = xSqlTypeDefault::create(); // FIXME: Implement suitable type creation
@@ -242,10 +248,10 @@ class xSqlRequestParserJoins extends xSqlRequestParser {
                 $type = $this->is_assoc($type) ? $type : null;
                 foreach ($joins as $local => $foreign) {
                     if (!is_array($foreign)) {
-                        $j[] = $this->create($local, $foreign, $type);
+                        $j[] = $this->create_join($local, $foreign, $type);
                     } else {
                         foreach ($foreign as $local => $foreign /* ns collision? */) {
-                            $j[] = $this->create($local, $foreign, $type);
+                            $j[] = $this->create_join($local, $foreign, $type);
                         }
                     }
                 }
@@ -271,7 +277,7 @@ class xSqlRequestParserJoins extends xSqlRequestParser {
      * @param string Operator description (=, !=, >, ...).
      * @return bool True if $key represents an associative array index.
      */
-    protected function create($local, $foreign, $type=null, $operator=null) {
+    protected function create_join($local, $foreign, $type=null, $operator=null) {
         // Extracts local field information
         $local_table = array_shift(array_slice(explode('.', $local), 0, 1));
         $local_field = array_shift(array_slice(explode('.', $local), 1, 1));
