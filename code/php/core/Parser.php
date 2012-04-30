@@ -15,7 +15,7 @@ abstract class xSqlRequestParser {
 
     public $params = array();
 
-    function __construct($params=array()) {
+    function __construct(array $params=array()) {
         $this->params = array_merge_recursive($this->params, $params);
     }
 
