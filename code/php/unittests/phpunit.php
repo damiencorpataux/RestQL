@@ -8,7 +8,7 @@
 **/
 
 // Requires PHPUnit library and dependancies
-$vendors = '../vendors';
+$vendors = __DIR__.'/../vendors';
 $phpunit = "{$vendors}/phpunit";
 $fileiterator = "{$vendors}/php-file-iterator/";
 $codecoverage = "{$vendors}/php-code-coverage/";
@@ -114,4 +114,4 @@ abstract class RestQL_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestC
 }
 
 // PHPUnit autorun
-PHPUnit_TextUI_Command::main();
+if (PHP_SAPI==='cli') PHPUnit_TextUI_Command::main();
