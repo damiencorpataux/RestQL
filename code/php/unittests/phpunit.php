@@ -31,15 +31,12 @@ require "{$phpunit}/PHPUnit/Autoload.php";
  */
 abstract class RestQL_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 {
+
+    public $path_json = '../../../specifications/data/';
+
     function setUp() {
         // Loads RestQL Library
         require_once('../import.php');
-    }
-
-    /**
-     * @return xSqlElement
-     */
-    protected function make_xsql() {
     }
 
     /**
@@ -47,27 +44,25 @@ abstract class RestQL_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestC
      * @param string Expected SQL
      */
     protected function do_test() {
+        // Computes testcase and test names
         $backtrace = debug_backtrace();
         $calling_function = $backtrace[1]['function'];
-        $data_function = preg_replace('/^test_/', 'restql_', $calling_function);
-        $expected_function = preg_replace('/^test_/', 'expected_', $calling_function);
-        //
-        $data = $this->$data_function();
-        $expected = $this->$expected_function();
+        $calling_class = $backtrace[1]['class'];
+        preg_match('/Example(.+)Tests/', $calling_class, $matches);
+        $case = strtolower(@$matches[1]);
+        $test = strtolower(str_replace('test_', null, $calling_function));
+        if (!$case || !$test) throw new Exception('Could not compute testcase name and/or test name');
+        // Retrieves JSON source
+        $json = file_get_contents("{$this->path_json}/{$case}/{$test}.json");
+        $sql = file_get_contents("{$this->path_json}/{$case}/{$test}.sql");
+        // Setups test components
         $parser = $this->parser;
+        $data = json_decode($json, true);
+        $expected = $sql;
+        if (!$data) throw new Exception("Invalid JSON: {$json}");
+        // Actual test
         $xsql = $parser::create($data)->parse();
         $this->assertSql($expected, $xsql);
-    }
-
-    protected function do_dump_expected($literalize=true) {
-        $backtrace = debug_backtrace();
-        $calling_function = $backtrace[1]['function'];
-        $data_function = preg_replace('/^test_/', 'restql_', $calling_function);
-        $expected_function = preg_replace('/^test_/', 'expected_', $calling_function);
-        //
-        $data = $this->$data_function();
-        $xsql = xSqlRequestParserSelect::create($data)->parse();
-        echo $literalize ? $this->literalize($xsql) : (string)$xsql;
     }
 
     /**
@@ -79,37 +74,9 @@ abstract class RestQL_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestC
      * @see literalize()
      */
     protected function assertSql($sql, xSqlElement $restql) {
-        $expected = $this->deliteralize($sql);
+        $expected = $sql;
         $actual = (string)$restql;
         return $this->assertSame($expected, $actual);
-    }
-
-    /**
-     * Literalizes the given $string.
-     * Returns $string with tabs, newline and return characters literalized.
-     * @param string The string to literalize.
-     * @return string
-     */
-    protected function literalize($string) {
-        return str_replace(
-            array("\t", "\n", "\r"),
-            array('\t', '\n', '\r'),
-            (string)$string
-        );
-    }
-
-    /**
-     * Deliteralizes the given $string.
-     * Returns $string with tabs, newline and return characters deliteralized.
-     * @param string The string to literalize.
-     * @return string
-     */
-    protected function deliteralize($string) {
-        return str_replace(
-            array('\t', '\n', '\r'),
-            array("\t", "\n", "\r"),
-            (string)$string
-        );
     }
 }
 

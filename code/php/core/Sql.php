@@ -100,63 +100,6 @@ abstract class xSqlElement {
 }
 
 /**
- * Represents an abstract SQL clause.
- * @package xSql
- */
-abstract class xSqlClause extends xSqlElement {}
-
-/**
- * Represents an SQL statement.
- * Responsible for: containing SQL clauses, outputting an whole SQL statement.
- * @package xSql
- */
-class xSql extends xSqlElement {
-
-    public $clauses = array();
-
-    public $order = array('xSqlSelect', 'xSqlFrom', 'xSqlJoins', 'xSqlWhere', 'xSqlGroup', 'xSqlOrder', 'xSqlOffset');
-
-    function __construct($clauses=array()) {
-        // Ensures components are allowed
-        foreach ($clauses as $clause) {
-            if (!$this->is_a($clause, $this->order)) {
-                $class = @get_class($clause);
-                $class = $class ? $class : '(not an object)';
-                throw new Exception("Unsupported clause class type: {$class}");
-            }
-        }
-        // Assigns validated clauses
-        $this->clauses = $clauses;
-    }
-
-    /**
-     * Determines if the given class $name is a child of one of the given $classes.
-     * @param object
-     * @param array
-     * @return boolean
-     */
-    function is_a($class, array $classes) {
-        foreach ($classes as $test_class) if (is_a($class, $test_class)) return true;
-        return false;
-    }
-
-    function __toString() {
-        // Checks components validity (TODO)
-        // (eg. xSqlSelect cannot have duplicates)
-        null;
-        // Orders components according their type (class name)
-        $me = $this;
-        $sorter = function($a, $b) use ($me) {
-            return array_search(get_class($a), $me->order) >= array_search(get_class($b), $me->order);
-        };
-        usort($this->clauses, $sorter);
-        // Generates SQL
-        return implode("\n", $this->clauses);
-    }
-}
-
-
-/**
  * Represents a database type.
  * Responsible for: value escaping and enquoting.
  * @package xSql
@@ -320,6 +263,62 @@ class xSqlField extends xSqlElement {
 abstract class xSqlExpression extends xSqlElement {}
 
 /**
+ * Represents an abstract SQL clause.
+ * @package xSql
+ */
+abstract class xSqlClause extends xSqlElement {}
+
+/**
+ * Represents an SQL statement.
+ * Responsible for: containing SQL clauses, outputting an whole SQL statement.
+ * @package xSql
+ */
+class xSql extends xSqlElement {
+
+    public $clauses = array();
+
+    public $order = array('xSqlSelect', 'xSqlFrom', 'xSqlJoins', 'xSqlWhere', 'xSqlGroup', 'xSqlOrder', 'xSqlOffset');
+
+    function __construct($clauses=array()) {
+        // Ensures components are allowed
+        foreach ($clauses as $clause) {
+            if (!$this->is_a($clause, $this->order)) {
+                $class = @get_class($clause);
+                $class = $class ? $class : '(not an object)';
+                throw new Exception("Unsupported clause class type: {$class}");
+            }
+        }
+        // Assigns validated clauses
+        $this->clauses = $clauses;
+    }
+
+    /**
+     * Determines if the given class $name is a child of one of the given $classes.
+     * @param object
+     * @param array
+     * @return boolean
+     */
+    function is_a($class, array $classes) {
+        foreach ($classes as $test_class) if (is_a($class, $test_class)) return true;
+        return false;
+    }
+
+    function __toString() {
+        // Checks components validity (TODO)
+        // (eg. xSqlSelect cannot have duplicates)
+        null;
+        // Orders components according their type (class name)
+        $me = $this;
+        $sorter = function($a, $b) use ($me) {
+            return array_search(get_class($a), $me->order) >= array_search(get_class($b), $me->order);
+        };
+        usort($this->clauses, $sorter);
+        // Generates SQL
+        return implode("\n", $this->clauses);
+    }
+}
+
+/**
  * Represents a SELECT clause.
  * @package xSql
  */
@@ -331,12 +330,12 @@ class xSqlSelect extends xSqlClause {
      */
     public $fields = array();
 
-    function __construct($fields=array()) {
-        $this->fields = is_array($fields) ? $fields : array($fields);
+    function __construct(array $fields=array()) {
+        $this->fields = $fields;
     }
 
     function __toString() {
-        return implode("\t", array("SELECT", implode(",\n\t", $this->fields)));
+        return implode(' ', array("SELECT", implode(', ', $this->fields)));
     }
 }
 
@@ -357,7 +356,7 @@ class xSqlFrom extends xSqlClause {
     }
 
     function __toString() {
-        return implode("\t", array("FROM", implode(",\n\t", $this->tables)));
+        return implode(' ', array("FROM", implode(', ', $this->tables)));
     }
 }
 
@@ -375,7 +374,7 @@ class xSqlJoins extends xSqlClause {
     }
 
     function __toString() {
-        return implode("\n", $this->joins);
+        return implode(' ', $this->joins);
     }
 
 }
@@ -607,7 +606,7 @@ class xSqlWherePredicateGroup extends xSqlElement {
 
     function __toString() {
         $operator = " {$this->operator} ";
-        return implode(array("(", implode($operator, $this->predicates), ")"));
+        return implode(array('(', implode($operator, $this->predicates), ')'));
     }
 }
 
