@@ -350,3 +350,32 @@ class xSqlRequestParserOrder extends xSqlRequestParser {
         return !((int)$key === $key);
     }
 }
+
+/**
+ * Creates a xSqlOffset clause from a structured description array.
+ * @package xSql
+ */
+class xSqlRequestParserOffset extends xSqlRequestParser {
+
+    /**
+     * @return xSqlOrder Containing the parsed fields and directions.
+     */
+    function parse() {
+        // TODO
+    }
+}
+
+/**
+ * Creates a complete xSql clause from a structured description array,
+ * according the fuzzy structure specification.
+ * @package xSql
+ */
+class xSqlRequestParserFuzzy extends xSqlRequestParser {
+
+    /**
+     * @return xSql Containing the parsed data.
+     */
+    function parse() {
+        // TODO
+    }
+}

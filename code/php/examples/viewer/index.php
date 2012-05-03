@@ -14,7 +14,7 @@ set_error_handler(function() {
 define('DIRECTORY_EXAMPLES', '../../unittests/specifications');
 define('DIRECTORY_SPECIFICATIONS', '../../../../specifications/data');
 
-define('CASES', 'select,from,joins,where,group,order,offset,smart');
+define('CASES', 'select,from,joins,where,group,order,offset,fuzzy');
 define('CASE_DEFAULT', array_shift(explode(',', CASES)));
 
 // Request management
