@@ -1,0 +1,5 @@
+[
+    "field-0",
+    { "table-1": "field-1" },
+    { "table-2": [ "field-2-1", "field-2-2" ] }
+]

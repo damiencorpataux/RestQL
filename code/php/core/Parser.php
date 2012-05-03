@@ -320,7 +320,7 @@ class xSqlRequestParserGroup extends xSqlRequestParser {
 }
 
 /**
- * Creates a xSqlParser clause from a structured description array.
+ * Creates a xSqlOrder clause from a structured description array.
  * @package xSql
  */
 class xSqlRequestParserOrder extends xSqlRequestParser {

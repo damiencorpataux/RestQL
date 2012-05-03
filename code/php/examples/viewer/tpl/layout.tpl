@@ -21,6 +21,7 @@
             $cases = $d['data']['cases'];
             $case = $d['request']['case'];
         ?>
+
         <ul class="nav nav-tabs">
         <?php foreach($cases as $type): ?>
             <?php $class = ($case == $type) ? 'active' : null ?>

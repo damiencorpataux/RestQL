@@ -16,7 +16,7 @@ textarea {
     <div class="span6">
         <h3>RestQL JSON input</h3>
         <textarea id="restql" name="json"><?php echo $d['json'] ?></textarea>
-        <input type="hidden" name="case" value="<?php echo $d['request']['case'] ?>"/>
+        <input type="hidden" name="run" value="<?php echo $d['request']['case'] ?>"/>
         <button id="btn-do" class="btn btn-primary pull-right">Parse to SQL &gt;</button>
     </div>
     <div class="span6">

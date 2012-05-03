@@ -1,0 +1,7 @@
+{
+    "table-1": { "alias-1": "field-1" },
+    "table-2": {
+        "alias-2-1": "field-2-1",
+        "alias-2-2": "field-2-2"
+    }
+}

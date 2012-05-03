@@ -1,0 +1,1 @@
+SELECT `field-1`, `field-2`

@@ -6,24 +6,25 @@
  * accessible at http://www.gnu.org/licenses/gpl-3.0.html
  *
 **/
+set_error_handler(function() {
+    null;
+});
 
 // Constants definition
-define('DIRECTORY_EXAMPLES', '../../unittests/examples');
+define('DIRECTORY_EXAMPLES', '../../unittests/specifications');
 define('DIRECTORY_SPECIFICATIONS', '../../../../specifications/data');
 
-define('CASES', 'select,from,join,where,group,order,offset,smart');
+define('CASES', 'select,from,joins,where,group,order,offset,smart');
 define('CASE_DEFAULT', array_shift(explode(',', CASES)));
 
 // Request management
 @list($case, $test) = explode(':', @$_REQUEST['run']);
 define('CASE', $case ? strtolower($case) : CASE_DEFAULT);
 define('TEST', $test);
-var_dump($case);
 
 // Page display
 require 'View.php';
-$side = xView::create('tpl/list.tpl', list_tests())->render();
-
+$side = xView::create('tpl/list.tpl', list_examples())->render();
 $body = xView::create('tpl/detail.tpl', array(
     'json' => get_json(),
     'sql' => parse(),
@@ -31,7 +32,6 @@ $body = xView::create('tpl/detail.tpl', array(
         'case' => $case
     )
 ))->render();
-
 $page = xView::create('tpl/layout.tpl', array(
     'html' => array(
         'side' => $side,
@@ -46,9 +46,7 @@ $page = xView::create('tpl/layout.tpl', array(
         'case_default' => array_shift(explode(',', CASES))
     )
 ))->render();
-
 echo $page;
-
 
 
 /******************************************************************************
@@ -71,6 +69,33 @@ function list_tests() {
         if (@$matches[1]) $tests[$case] = $matches[1];
     }
     return $tests;
+}
+
+function list_examples() {
+    $directory = DIRECTORY_SPECIFICATIONS;
+    // Retieves cases
+    $cases = array_filter(scandir($directory), function($file) {
+        return !in_array($file, array('.', '..'));
+    });
+    // Orders cases
+    usort($cases, function($a, $b) {
+        $cases = array_map('trim', explode(',', CASES));
+        return array_search(strtolower($a), $cases) > array_search(strtolower($b), $cases);
+    });
+    // Retrieves examples for cases
+    $examples = array();
+    foreach ($cases as $case) {
+        // Fetches examples files
+        $files = array_filter(scandir("$directory/$case"), function($file) {
+            return !in_array($file, array('.', '..'));
+        });
+        // Trims files extension and makes examples unique
+        $files = array_unique(array_map(function($item) {
+            return str_replace(array('.json', '.sql'), null, $item);
+        }, $files));
+        $examples[$case] = $files;
+    }
+    return $examples;
 }
 
 // Returns the current JSON, or the selected example JSON
@@ -103,7 +128,7 @@ function parse() {
     $parser = "xSqlRequestParser{$case}";
     try {
         return $parser::create($data)->parse();
-    } catch (stdObj $e) {
+    } catch (Exception $e) {
         return $e->getMessage();
     }
 }
